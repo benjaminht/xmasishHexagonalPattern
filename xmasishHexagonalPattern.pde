@@ -1,12 +1,11 @@
 import processing.svg.*;
 
-int tHeight = 30;
-float side, border;
+int tHeight = 60;
 
 //randomized parameters
-float lineDist = 5;
-float linewidth = 2;
+float lineDist,lineWidth;
 
+//
 float xMargin = 2.5;
 float yMargin = 3.1;
 
@@ -16,10 +15,9 @@ void setup() {
   noFill();
   stroke(255);
   
-  lineDist = tHeight/2.4;
-  linewidth = tHeight/10;
-  
+  lineWidth = tHeight/10;  
   lineDist = tHeight/5;
+  
   beginRecord(SVG, "output.svg");
   noFill();
   
@@ -30,21 +28,9 @@ void setup() {
         pushMatrix();
         float hexoffset = j%2 == 0 ? 0 : 0.5;
         translate(j*(tHeight*xMargin), (k+hexoffset)*(tHeight*yMargin));
-        drawHexShape(tHeight/random(2.4,10),tHeight/random(2.7,10));
+        new hexShape(tHeight, tHeight/random(2.4,10),tHeight/random(2.7,10));
         popMatrix();
     }
   }
   endRecord();
-}
-
-//some basic trigonometry for better readability
-
-// get hypothenuse from adjacent leg and angle
-float hypothenuse(float adjacentLeg, float angle) {
-  return (adjacentLeg/sin(radians(angle)));
-}
-
-// get adjacent leg from opposite leg and angle
-float adjacentLeg(float oppositeLeg, float angle) {
-  return (oppositeLeg/tan(radians(angle)));
 }

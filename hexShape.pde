@@ -1,53 +1,68 @@
-void drawHexShape(float lineDist, float linewidth){
-  side = tHeight/(sqrt(3)/2);
-  border = (tHeight+linewidth)/(sqrt(3)/2);
-  linewidth /= 2;
+class hexShape { 
+  float side, border;
+  PShape fragment,outerBorder,triangle,hole,star;
+  hexShape(float tHeight, float lineDist, float lineWidth) {    
+    side = tHeight/(sqrt(3)/2);
+    border = (tHeight+lineWidth)/(sqrt(3)/2);
+    lineWidth /= 2;
+    if (lineWidth > lineDist) lineDist = lineWidth+(tHeight/20);
+    
+    textSize(10);
+    //display parameter values below hexShape
+    //text(String.format("%.1f", lineDist)+" - "+String.format("%.1f",linewidth,2), -tHeight/2, tHeight*1.6);
+    
+    outerBorder = createShape();
+    outerBorder.beginShape();
+    outerBorder.vertex(border/2, -(tHeight+lineWidth*2));
+    outerBorder.vertex(-border/2, -(tHeight+lineWidth*2));
+    outerBorder.endShape();
 
-  if (linewidth > lineDist) lineDist = linewidth+(tHeight/20);
+    triangle = createShape();
+    triangle.beginShape();
+    triangle.vertex(0, -hypothenuse(lineDist+lineWidth, 30));
+    triangle.vertex((side/2)-hypothenuse(lineDist+lineWidth, 60), -tHeight);
+    triangle.vertex(0, -tHeight);
+    triangle.endShape();
 
-  textSize(10);
-  //display parameter values below shape
-  //text(String.format("%.1f", lineDist)+" - "+String.format("%.1f",linewidth,2), -tHeight/2, tHeight*1.6);
-  for (int i = 0; i < 6; i++) {
-    pushMatrix();
-    rotate(radians(60*i));
+    hole = createShape();
+    hole.beginShape();
+    hole.vertex(side/2, -tHeight);
+    hole.vertex((side/2)-hypothenuse(lineDist-lineWidth, 60), -tHeight);
+    hole.vertex(adjacentLeg(hypothenuse(lineWidth, 30), 60), -hypothenuse(lineDist, 30));
+    hole.vertex(adjacentLeg(hypothenuse(lineDist+lineWidth, 30)/2, 60), -hypothenuse(lineDist+lineWidth, 30)/2);
+    hole.endShape();
 
-    // outer border
-    beginShape();
-    vertex(border/2, -(tHeight+linewidth*2));
-    vertex(-border/2, -(tHeight+linewidth*2));
-    endShape();
+    star = createShape();
+    star.beginShape();
+    star.vertex(adjacentLeg(hypothenuse(lineDist-lineWidth, 30)/2, 60), -hypothenuse(lineDist-lineWidth, 30)/2);
+    star.vertex(0, -hypothenuse(lineDist-lineWidth, 30));
+    star.endShape();
+    
+    fragment = createShape(GROUP);
+    fragment.addChild(outerBorder);
+    fragment.addChild(triangle);
+    fragment.addChild(hole);
+    fragment.addChild(star);
+    fragment.setStroke(color(255));
+    fragment.setStrokeWeight(4);
+    
+    for (int i = 0; i < 6; i++) {
+      rotate(radians(60*i));
+      shape(fragment);
+      scale(-1,1);
+      shape(fragment);
+    }    
+  }  
 
-    // tringale
-    beginShape();
-    vertex((side/2)-hypothenuse(lineDist+linewidth, 60), -tHeight);
-    vertex(0, -hypothenuse(lineDist+linewidth, 30));
-    vertex(-((side/2)-hypothenuse(lineDist+linewidth, 60)), -tHeight);
-    vertex((side/2)-hypothenuse(lineDist+linewidth, 60), -tHeight);
-    endShape();
-
-    // elongated hole
-    beginShape();
-    vertex(side/2, -tHeight);
-    vertex((side/2)-hypothenuse(lineDist-linewidth, 60), -tHeight);
-    vertex(adjacentLeg(hypothenuse(linewidth, 30), 60), -hypothenuse(lineDist, 30));
-    vertex(adjacentLeg(hypothenuse(lineDist+linewidth, 30)/2, 60), -hypothenuse(lineDist+linewidth, 30)/2);
-    endShape();
-
-    beginShape();
-    vertex(-(side/2), -tHeight);
-    vertex(-((side/2)-hypothenuse(lineDist-linewidth, 60)), -tHeight);
-    vertex(-adjacentLeg(hypothenuse(linewidth, 30), 60), -hypothenuse(lineDist, 30));
-    vertex(-adjacentLeg(hypothenuse(lineDist+linewidth, 30)/2, 60), -hypothenuse(lineDist+linewidth, 30)/2);
-    endShape();
-
-    // star
-    beginShape();
-    vertex(adjacentLeg(hypothenuse(lineDist-linewidth, 30)/2, 60), -hypothenuse(lineDist-linewidth, 30)/2);
-    vertex(0, -hypothenuse(lineDist-linewidth, 30));
-    vertex(-adjacentLeg(hypothenuse(lineDist-linewidth, 30)/2, 60), -hypothenuse(lineDist-linewidth, 30)/2);
-    endShape();
-
-    popMatrix();
+  //some basic trigonometry for better readability
+  
+  // get hypothenuse from adjacent leg and angle
+  float hypothenuse(float adjacentLeg, float angle) {
+    return (adjacentLeg/sin(radians(angle)));
+  }
+  
+  // get adjacent leg from opposite leg and angle
+  float adjacentLeg(float oppositeLeg, float angle) {
+    return (oppositeLeg/tan(radians(angle)));
   }
 }
