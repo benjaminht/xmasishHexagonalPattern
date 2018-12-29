@@ -20,7 +20,7 @@ void setup() {
   linewidth = tHeight/10;
   
   lineDist = tHeight/5;
-  beginRecord(SVG, "star.svg");
+  beginRecord(SVG, "output.svg");
   noFill();
   
   pushMatrix();
