@@ -23,70 +23,17 @@ void setup() {
   beginRecord(SVG, "output.svg");
   noFill();
   
-  pushMatrix();
   translate(tHeight*1.8, tHeight*1.8);
     for (float j = 0; j < floor((width/(tHeight*xMargin))); j++) {
       for (float k = 0; k < floor((height/(tHeight*yMargin))); k++) {
         
-       lineDist = tHeight/random(2.4,10);
-       linewidth = tHeight/random(2.7,10);
-       
-        side = tHeight/(sqrt(3)/2);
-        border = (tHeight+linewidth)/(sqrt(3)/2);
-        linewidth /= 2;
-        
-        if (linewidth > lineDist) lineDist = linewidth+(tHeight/20);
-        
         pushMatrix();
         float hexoffset = j%2 == 0 ? 0 : 0.5;
         translate(j*(tHeight*xMargin), (k+hexoffset)*(tHeight*yMargin));
-        textSize(10);
-        //display parameter values below shape
-        //text(String.format("%.1f", linewidth)+" "+String.format("%.1f", lineDist,2), -tHeight/2, tHeight*1.6);
-         for (int i = 0; i < 6; i++) {
-          pushMatrix();
-          rotate(radians(60*i));
-          
-          // outer border
-          beginShape();
-           vertex(border/2, -(tHeight+linewidth*2));
-           vertex(-border/2, -(tHeight+linewidth*2));
-           endShape();
-        
-          // small tringale
-          beginShape();
-          vertex((side/2)-hypothenuse(lineDist+linewidth, 60), -tHeight);
-          vertex(0, -hypothenuse(lineDist+linewidth, 30));
-          vertex(-((side/2)-hypothenuse(lineDist+linewidth, 60)), -tHeight);
-          vertex((side/2)-hypothenuse(lineDist+linewidth, 60), -tHeight);
-          endShape();
-        
-          beginShape();
-          vertex(side/2, -tHeight);
-          vertex((side/2)-hypothenuse(lineDist-linewidth, 60), -tHeight);
-          vertex(adjacentLeg(hypothenuse(linewidth, 30), 60), -hypothenuse(lineDist, 30));
-          vertex(adjacentLeg(hypothenuse(lineDist+linewidth, 30)/2, 60), -hypothenuse(lineDist+linewidth, 30)/2);
-          endShape();
-        
-          beginShape();
-          vertex(-(side/2), -tHeight);
-          vertex(-((side/2)-hypothenuse(lineDist-linewidth, 60)), -tHeight);
-          vertex(-adjacentLeg(hypothenuse(linewidth, 30), 60), -hypothenuse(lineDist, 30));
-          vertex(-adjacentLeg(hypothenuse(lineDist+linewidth, 30)/2, 60), -hypothenuse(lineDist+linewidth, 30)/2);
-          endShape();
-        
-          beginShape();
-          vertex(adjacentLeg(hypothenuse(lineDist-linewidth, 30)/2, 60), -hypothenuse(lineDist-linewidth, 30)/2);
-          vertex(0, -hypothenuse(lineDist-linewidth, 30));
-          vertex(-adjacentLeg(hypothenuse(lineDist-linewidth, 30)/2, 60), -hypothenuse(lineDist-linewidth, 30)/2);
-          endShape();
-          
-          popMatrix();
-        }
-      popMatrix();
+        drawHexShape(tHeight/random(2.4,10),tHeight/random(2.7,10));
+        popMatrix();
     }
   }
-  popMatrix();
   endRecord();
 }
 
