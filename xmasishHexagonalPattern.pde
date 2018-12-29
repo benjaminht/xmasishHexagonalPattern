@@ -2,8 +2,11 @@ import processing.svg.*;
 
 int tHeight = 30;
 float side, border;
+
+//randomized parameters
 float lineDist = 5;
 float linewidth = 2;
+
 float xMargin = 2.5;
 float yMargin = 3.1;
 
@@ -17,7 +20,7 @@ void setup() {
   linewidth = tHeight/10;
   
   lineDist = tHeight/5;
-  beginRecord(SVG, "stern.svg");
+  beginRecord(SVG, "star.svg");
   noFill();
   
   pushMatrix();
@@ -38,6 +41,7 @@ void setup() {
         float hexoffset = j%2 == 0 ? 0 : 0.5;
         translate(j*(tHeight*xMargin), (k+hexoffset)*(tHeight*yMargin));
         textSize(10);
+        //display parameter values below shape
         //text(String.format("%.1f", linewidth)+" "+String.format("%.1f", lineDist,2), -tHeight/2, tHeight*1.6);
          for (int i = 0; i < 6; i++) {
           pushMatrix();
@@ -51,30 +55,30 @@ void setup() {
         
           // small tringale
           beginShape();
-          vertex((side/2)-hypo(lineDist+linewidth, 60), -tHeight);
-          vertex(0, -hypo(lineDist+linewidth, 30));
-          vertex(-((side/2)-hypo(lineDist+linewidth, 60)), -tHeight);
-          vertex((side/2)-hypo(lineDist+linewidth, 60), -tHeight);
+          vertex((side/2)-hypothenuse(lineDist+linewidth, 60), -tHeight);
+          vertex(0, -hypothenuse(lineDist+linewidth, 30));
+          vertex(-((side/2)-hypothenuse(lineDist+linewidth, 60)), -tHeight);
+          vertex((side/2)-hypothenuse(lineDist+linewidth, 60), -tHeight);
           endShape();
         
           beginShape();
           vertex(side/2, -tHeight);
-          vertex((side/2)-hypo(lineDist-linewidth, 60), -tHeight);
-          vertex(aKat(hypo(linewidth, 30), 60), -hypo(lineDist, 30));
-          vertex(aKat(hypo(lineDist+linewidth, 30)/2, 60), -hypo(lineDist+linewidth, 30)/2);
+          vertex((side/2)-hypothenuse(lineDist-linewidth, 60), -tHeight);
+          vertex(adjacentLeg(hypothenuse(linewidth, 30), 60), -hypothenuse(lineDist, 30));
+          vertex(adjacentLeg(hypothenuse(lineDist+linewidth, 30)/2, 60), -hypothenuse(lineDist+linewidth, 30)/2);
           endShape();
         
           beginShape();
           vertex(-(side/2), -tHeight);
-          vertex(-((side/2)-hypo(lineDist-linewidth, 60)), -tHeight);
-          vertex(-aKat(hypo(linewidth, 30), 60), -hypo(lineDist, 30));
-          vertex(-aKat(hypo(lineDist+linewidth, 30)/2, 60), -hypo(lineDist+linewidth, 30)/2);
+          vertex(-((side/2)-hypothenuse(lineDist-linewidth, 60)), -tHeight);
+          vertex(-adjacentLeg(hypothenuse(linewidth, 30), 60), -hypothenuse(lineDist, 30));
+          vertex(-adjacentLeg(hypothenuse(lineDist+linewidth, 30)/2, 60), -hypothenuse(lineDist+linewidth, 30)/2);
           endShape();
         
           beginShape();
-          vertex(aKat(hypo(lineDist-linewidth, 30)/2, 60), -hypo(lineDist-linewidth, 30)/2);
-          vertex(0, -hypo(lineDist-linewidth, 30));
-          vertex(-aKat(hypo(lineDist-linewidth, 30)/2, 60), -hypo(lineDist-linewidth, 30)/2);
+          vertex(adjacentLeg(hypothenuse(lineDist-linewidth, 30)/2, 60), -hypothenuse(lineDist-linewidth, 30)/2);
+          vertex(0, -hypothenuse(lineDist-linewidth, 30));
+          vertex(-adjacentLeg(hypothenuse(lineDist-linewidth, 30)/2, 60), -hypothenuse(lineDist-linewidth, 30)/2);
           endShape();
           
           popMatrix();
@@ -86,12 +90,14 @@ void setup() {
   endRecord();
 }
 
-// get hypothenuse from ankathete and angle
-float hypo(float ankathete, float winkel) {
-  return (ankathete/sin(radians(winkel)));
+//some basic trigonometry for better readability
+
+// get hypothenuse from adjacent leg and angle
+float hypothenuse(float adjacentLeg, float angle) {
+  return (adjacentLeg/sin(radians(angle)));
 }
 
-// get ankathete from gegenkathete and angle
-float aKat(float gegenkathete, float winkel) {
-  return (gegenkathete/tan(radians(winkel)));
+// get adjacent leg from opposite leg and angle
+float adjacentLeg(float oppositeLeg, float angle) {
+  return (oppositeLeg/tan(radians(angle)));
 }
