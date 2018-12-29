@@ -3,7 +3,6 @@ void drawHexShape(float lineDist, float linewidth){
   border = (tHeight+linewidth)/(sqrt(3)/2);
   linewidth /= 2;
 
-  //parameter contrains to preserve holes
   if (linewidth > lineDist) lineDist = linewidth+(tHeight/20);
 
   textSize(10);
