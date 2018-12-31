@@ -13,46 +13,60 @@ class hexShape {
     
     outerBorder = createShape();
     outerBorder.beginShape();
-    outerBorder.vertex(border/2, -(tHeight+lineWidth*2));
-    outerBorder.vertex(-border/2, -(tHeight+lineWidth*2));
-    outerBorder.endShape();
+    for (int i = 0; i < 6; i++) {
+      PVector rotCorner = pointRotation(new PVector(border/2, -(tHeight+lineWidth*2)),60*i);
+      outerBorder.vertex(rotCorner.x,rotCorner.y);
+    }
+    outerBorder.endShape(CLOSE);
 
     triangle = createShape();
     triangle.beginShape();
     triangle.vertex(0, -hypothenuse(lineDist+lineWidth, 30));
     triangle.vertex((side/2)-hypothenuse(lineDist+lineWidth, 60), -tHeight);
-    triangle.vertex(0, -tHeight);
-    triangle.endShape();
-
+    triangle.vertex(-((side/2)-hypothenuse(lineDist+lineWidth, 60)), -tHeight);
+    triangle.endShape(CLOSE);
+    
     hole = createShape();
     hole.beginShape();
-    hole.vertex(side/2, -tHeight);
-    hole.vertex((side/2)-hypothenuse(lineDist-lineWidth, 60), -tHeight);
-    hole.vertex(adjacentLeg(hypothenuse(lineWidth, 30), 60), -hypothenuse(lineDist, 30));
-    hole.vertex(adjacentLeg(hypothenuse(lineDist+lineWidth, 30)/2, 60), -hypothenuse(lineDist+lineWidth, 30)/2);
-    hole.endShape();
+    PVector holeLeft1 = new PVector(side/2, -tHeight);
+    PVector holeLeft2 = new PVector((side/2)-hypothenuse(lineDist-lineWidth, 60), -tHeight);
+    PVector holeLeft3 = new PVector(adjacentLeg(hypothenuse(lineWidth, 30), 60), -hypothenuse(lineDist, 30));
+    PVector holeLeftRot1 = pointRotation(holeLeft1,180);
+    PVector holeLeftRot2 = pointRotation(holeLeft2,180);
+    PVector holeLeftRot3 = pointRotation(holeLeft3,180);
+    PVector holeSpace = new PVector(adjacentLeg(hypothenuse(lineDist+lineWidth, 30)/2, 60), -hypothenuse(lineDist+lineWidth, 30)/2);
+    
+    hole.vertex(holeLeft1.x,holeLeft1.y);
+    hole.vertex(holeLeft2.x,holeLeft2.y);
+    hole.vertex(holeLeft3.x,holeLeft3.y);
+    hole.vertex(holeLeftRot1.x+(holeLeft1.x+holeSpace.x),holeLeftRot1.y+(holeLeft1.y+holeSpace.y));
+    hole.vertex(holeLeftRot2.x+(holeLeft1.x+holeSpace.x),holeLeftRot2.y+(holeLeft1.y+holeSpace.y));
+    hole.vertex(holeLeftRot3.x+(holeLeft1.x+holeSpace.x),holeLeftRot3.y+(holeLeft1.y+holeSpace.y));
+    hole.endShape(CLOSE);
 
     star = createShape();
     star.beginShape();
-    star.vertex(adjacentLeg(hypothenuse(lineDist-lineWidth, 30)/2, 60), -hypothenuse(lineDist-lineWidth, 30)/2);
-    star.vertex(0, -hypothenuse(lineDist-lineWidth, 30));
-    star.endShape();
-    
+    for (int i = 0; i < 6; i++) {
+      PVector star1 = new PVector(0, -hypothenuse(lineDist-lineWidth, 30));
+      PVector star2 = new PVector(adjacentLeg(hypothenuse(lineDist-lineWidth, 30)/2, 60), -hypothenuse(lineDist-lineWidth, 30)/2);
+      PVector rot1 = pointRotation(star1,60*i);
+      PVector rot2 = pointRotation(star2,60*i);
+      star.vertex(rot1.x,rot1.y);
+      star.vertex(rot2.x,rot2.y);
+    }
+    star.endShape(CLOSE);
+
     fragment = createShape(GROUP);
-    fragment.addChild(outerBorder);
     fragment.addChild(triangle);
     fragment.addChild(hole);
-    fragment.addChild(star);
-    fragment.setStroke(color(255));
-    fragment.setStrokeWeight(4);
     
     for (int i = 0; i < 6; i++) {
-      rotate(radians(60*i));
       shape(fragment);
-      scale(-1,1);
-      shape(fragment);
-    }    
-  }  
+      rotate(radians(60));
+    }
+    shape(outerBorder);
+    shape(star);
+  }
 
   //some basic trigonometry for better readability
   
@@ -64,5 +78,13 @@ class hexShape {
   // get adjacent leg from opposite leg and angle
   float adjacentLeg(float oppositeLeg, float angle) {
     return (oppositeLeg/tan(radians(angle)));
+  }
+  
+  // popMatrix/pushMatrix inside beginShape is not supported, so here's a custom point rotation functio 
+  PVector pointRotation(PVector point, float angle) {
+    PVector rotatedPoint = new PVector();
+    rotatedPoint.x = point.x*cos(radians(angle))-point.y*sin(radians(angle));
+    rotatedPoint.y = point.x*sin(radians(angle))+point.y*cos(radians(angle));
+    return rotatedPoint;
   }
 }
