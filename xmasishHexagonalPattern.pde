@@ -11,9 +11,9 @@ float yMargin = 3.1;
 
 void setup() {
   size(1200, 700);
-  background(50);
+  background(150);
   noFill();
-  stroke(255);
+  stroke(0);
   
   lineWidth = tHeight/10;  
   lineDist = tHeight/5;

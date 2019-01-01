@@ -35,7 +35,6 @@ class hexShape {
     PVector holeLeftRot2 = pointRotation(holeLeft2,180);
     PVector holeLeftRot3 = pointRotation(holeLeft3,180);
     PVector holeSpace = new PVector(adjacentLeg(hypothenuse(lineDist+lineWidth, 30)/2, 60), -hypothenuse(lineDist+lineWidth, 30)/2);
-    
     hole.vertex(holeLeft1.x,holeLeft1.y);
     hole.vertex(holeLeft2.x,holeLeft2.y);
     hole.vertex(holeLeft3.x,holeLeft3.y);
