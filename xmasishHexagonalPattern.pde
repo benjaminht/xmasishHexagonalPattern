@@ -1,29 +1,30 @@
 import processing.svg.*;
 
-int tHeight = 60;
+int tHeight = 30;
 
 //randomized parameters
 float lineDist,lineWidth;
 
 //
-float xMargin = 2.5;
-float yMargin = 3.1;
+float xMargin = 2.4;
+float yMargin = 3;
 
 void setup() {
-  size(1200, 700);
-  background(150);
+  size(900, 350);
+  
+  beginRecord(SVG, "output.svg");
+  noStroke();
+  fill(50);
+  rect(0,0,width,height);
   noFill();
-  stroke(0);
+  stroke(255);
   
   lineWidth = tHeight/10;  
   lineDist = tHeight/5;
   
-  beginRecord(SVG, "output.svg");
-  noFill();
-  
   translate(tHeight*1.8, tHeight*1.8);
     for (float j = 0; j < floor((width/(tHeight*xMargin))); j++) {
-      for (float k = 0; k < floor((height/(tHeight*yMargin))); k++) {
+      for (float k = 0; k < floor((height/((tHeight+0.5*yMargin)*yMargin))); k++) {
         
         pushMatrix();
         float hexoffset = j%2 == 0 ? 0 : 0.5;
