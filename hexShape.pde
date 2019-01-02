@@ -1,6 +1,7 @@
 class hexShape { 
   float side, border;
-  PShape fragment,outerBorder,triangle,hole,star;
+  ArrayList<PVector> triangle, smallHex;
+  
   hexShape(float tHeight, float lineDist, float lineWidth) {    
     side = tHeight/(sqrt(3)/2);
     border = (tHeight+lineWidth)/(sqrt(3)/2);
@@ -11,23 +12,16 @@ class hexShape {
     //display parameter values below hexShape
     //text(String.format("%.1f", lineDist)+" - "+String.format("%.1f",linewidth,2), -tHeight/2, tHeight*1.6);
     
-    outerBorder = createShape();
-    outerBorder.beginShape();
-    for (int i = 0; i < 6; i++) {
-      PVector rotCorner = pointRotation(new PVector(border/2, -(tHeight+lineWidth*2)),60*i);
-      outerBorder.vertex(rotCorner.x,rotCorner.y);
-    }
-    outerBorder.endShape(CLOSE);
-
-    triangle = createShape();
-    triangle.beginShape();
-    triangle.vertex(0, -hypothenuse(lineDist+lineWidth, 30));
-    triangle.vertex((side/2)-hypothenuse(lineDist+lineWidth, 60), -tHeight);
-    triangle.vertex(-((side/2)-hypothenuse(lineDist+lineWidth, 60)), -tHeight);
-    triangle.endShape(CLOSE);
+    //calculate points for the triangles
+    triangle = new ArrayList<PVector>();
     
-    hole = createShape();
-    hole.beginShape();
+    triangle.add(new PVector(0, -hypothenuse(lineDist+lineWidth, 30)));
+    triangle.add(new PVector((side/2)-hypothenuse(lineDist+lineWidth, 60), -tHeight));
+    triangle.add(new PVector(-((side/2)-hypothenuse(lineDist+lineWidth, 60)), -tHeight));
+    
+    //calculate points for the small hexagons
+    smallHex = new ArrayList<PVector>();
+    
     PVector holeLeft1 = new PVector(side/2, -tHeight);
     PVector holeLeft2 = new PVector((side/2)-hypothenuse(lineDist-lineWidth, 60), -tHeight);
     PVector holeLeft3 = new PVector(adjacentLeg(hypothenuse(lineWidth, 30), 60), -hypothenuse(lineDist, 30));
@@ -35,39 +29,52 @@ class hexShape {
     PVector holeLeftRot2 = pointRotation(holeLeft2,180);
     PVector holeLeftRot3 = pointRotation(holeLeft3,180);
     PVector holeSpace = new PVector(adjacentLeg(hypothenuse(lineDist+lineWidth, 30)/2, 60), -hypothenuse(lineDist+lineWidth, 30)/2);
-    hole.vertex(holeLeft1.x,holeLeft1.y);
-    hole.vertex(holeLeft2.x,holeLeft2.y);
-    hole.vertex(holeLeft3.x,holeLeft3.y);
-    hole.vertex(holeLeftRot1.x+(holeLeft1.x+holeSpace.x),holeLeftRot1.y+(holeLeft1.y+holeSpace.y));
-    hole.vertex(holeLeftRot2.x+(holeLeft1.x+holeSpace.x),holeLeftRot2.y+(holeLeft1.y+holeSpace.y));
-    hole.vertex(holeLeftRot3.x+(holeLeft1.x+holeSpace.x),holeLeftRot3.y+(holeLeft1.y+holeSpace.y));
-    hole.endShape(CLOSE);
+    
+    smallHex.add(new PVector(holeLeft1.x,holeLeft1.y));
+    smallHex.add(new PVector(holeLeft2.x,holeLeft2.y));
+    smallHex.add(new PVector(holeLeft3.x,holeLeft3.y));
+    smallHex.add(new PVector(holeLeftRot1.x+(holeLeft1.x+holeSpace.x),holeLeftRot1.y+(holeLeft1.y+holeSpace.y)));
+    smallHex.add(new PVector(holeLeftRot2.x+(holeLeft1.x+holeSpace.x),holeLeftRot2.y+(holeLeft1.y+holeSpace.y)));
+    smallHex.add(new PVector(holeLeftRot3.x+(holeLeft1.x+holeSpace.x),holeLeftRot3.y+(holeLeft1.y+holeSpace.y)));
 
-    star = createShape();
-    star.beginShape();
+    // draw outer hexagon shape
+    beginShape();
+    for (int i = 0; i <= 6; i++) {
+      PVector rotCorner = pointRotation(new PVector(border/2, -(tHeight+lineWidth*2)),60*i);
+      vertex(rotCorner.x,rotCorner.y);
+    }
+
     for (int i = 0; i < 6; i++) {
+      // draw triangles
+      beginContour();
+      for (int j = 0; j < triangle.size(); j++) {
+        PVector rotPoint = pointRotation(new PVector(triangle.get(j).x,triangle.get(j).y),i*60); 
+       vertex(rotPoint.x,rotPoint.y);
+      }
+      endContour();
+      // draw small hexagons
+      beginContour();
+      for (int j = 0; j < smallHex.size(); j++) {
+        PVector rotPoint = pointRotation(new PVector(smallHex.get(j).x,smallHex.get(j).y),i*60); 
+       vertex(rotPoint.x,rotPoint.y);
+      }
+      endContour();
+    }
+    // draw center star
+    beginContour();
+    for (int j = 5; j >= 0; j--) {
       PVector star1 = new PVector(0, -hypothenuse(lineDist-lineWidth, 30));
       PVector star2 = new PVector(adjacentLeg(hypothenuse(lineDist-lineWidth, 30)/2, 60), -hypothenuse(lineDist-lineWidth, 30)/2);
-      PVector rot1 = pointRotation(star1,60*i);
-      PVector rot2 = pointRotation(star2,60*i);
-      star.vertex(rot1.x,rot1.y);
-      star.vertex(rot2.x,rot2.y);
+      PVector rot1 = pointRotation(star1,60*j);
+      PVector rot2 = pointRotation(star2,60*j);
+      vertex(rot2.x,rot2.y);
+      vertex(rot1.x,rot1.y);
     }
-    star.endShape(CLOSE);
-
-    fragment = createShape(GROUP);
-    fragment.addChild(triangle);
-    fragment.addChild(hole);
-    
-    for (int i = 0; i < 6; i++) {
-      shape(fragment);
-      rotate(radians(60));
-    }
-    shape(outerBorder);
-    shape(star);
+    endContour();
+    endShape(CLOSE);
   }
 
-  //some basic trigonometry for better readability
+  //some basic trigonometry
   
   // get hypothenuse from adjacent leg and angle
   float hypothenuse(float adjacentLeg, float angle) {
@@ -79,7 +86,7 @@ class hexShape {
     return (oppositeLeg/tan(radians(angle)));
   }
   
-  // popMatrix/pushMatrix inside beginShape is not supported, so here's a custom point rotation functio 
+  // popMatrix/pushMatrix between beginShape/endShape is not supported, so here's a custom point rotation function
   PVector pointRotation(PVector point, float angle) {
     PVector rotatedPoint = new PVector();
     rotatedPoint.x = point.x*cos(radians(angle))-point.y*sin(radians(angle));

@@ -17,7 +17,9 @@ void setup() {
   fill(50);
   rect(0,0,width,height);
   noFill();
-  stroke(255);
+  fill(200);
+  noStroke();
+  //stroke(255);
   
   lineWidth = tHeight/10;  
   lineDist = tHeight/5;
